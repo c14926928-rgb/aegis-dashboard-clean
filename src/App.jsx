@@ -18,18 +18,12 @@ function App() {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const canvasRef = useRef(null);
 
-  // ================= ID =================
+  // ================= GET ID =================
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
+    const id = new URLSearchParams(window.location.search).get("id");
 
-    if (!id) {
-      console.log("❌ No server ID");
-      return;
-    }
-
-    console.log("🆔 Server ID:", id);
+    if (!id) return;
     setServerId(id);
   }, []);
 
@@ -40,20 +34,22 @@ function App() {
 
     try {
       const [
-  logsRes,
-  detectionsRes,
-  playersRes,
-  alertsRes,
-  bansRes,
-  movementRes
-] = await Promise.all([
-  fetch(`https://aegis-backend-gwu4.onrender.com/logs?serverId=${serverId}`),
-  fetch(`https://aegis-backend-gwu4.onrender.com/detections?serverId=${serverId}`),
-  fetch(`https://aegis-backend-gwu4.onrender.com/players?serverId=${serverId}`),
-  fetch(`https://aegis-backend-gwu4.onrender.com/alerts?serverId=${serverId}`),
-  fetch(`https://aegis-backend-gwu4.onrender.com/bans?serverId=${serverId}`),
-  fetch(`https://aegis-backend-gwu4.onrender.com/movement?serverId=${serverId}`)
-]);
+        logsRes,
+        detectionsRes,
+        playersRes,
+        alertsRes,
+        bansRes,
+        movementRes,
+        statusRes
+      ] = await Promise.all([
+        fetch(`${API}/logs?serverId=${serverId}`),
+        fetch(`${API}/detections?serverId=${serverId}`),
+        fetch(`${API}/players?serverId=${serverId}`),
+        fetch(`${API}/alerts?serverId=${serverId}`),
+        fetch(`${API}/bans?serverId=${serverId}`),
+        fetch(`${API}/movement?serverId=${serverId}`),
+        fetch(`${API}/status?id=${serverId}`)
+      ]);
 
       setLogs(await logsRes.json());
       setDetections(await detectionsRes.json());
@@ -74,10 +70,9 @@ function App() {
     if (!serverId) return;
 
     fetchAll();
-
     const interval = setInterval(fetchAll, 3000);
-    return () => clearInterval(interval);
 
+    return () => clearInterval(interval);
   }, [serverId]);
 
   // ================= ACTION =================
@@ -85,36 +80,10 @@ function App() {
   const sendAction = async (type, player) => {
     await fetch(`${API}/action`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ type, player })
     });
   };
-
-  // ================= SPECTATE =================
-
-  useEffect(() => {
-    if (tab !== "spectate") return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-
-    const loadFrame = () => {
-      const img = new Image();
-      img.src = `${API}/frame?t=${Date.now()}`;
-
-      img.onload = () => {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      };
-    };
-
-    const interval = setInterval(loadFrame, 1000);
-    return () => clearInterval(interval);
-
-  }, [tab]);
 
   // ================= UI =================
 
@@ -125,7 +94,7 @@ function App() {
       <div style={styles.sidebar}>
         <div style={styles.logo}>Conclave AC</div>
 
-        {["dashboard","players","monitoring","detections","alerts","bans","logs"].map((t) => (
+        {["dashboard","players","detections","alerts","bans","logs"].map((t) => (
           <div
             key={t}
             onClick={() => setTab(t)}
@@ -167,6 +136,8 @@ function App() {
           <div style={styles.panel}>
             <h2>Players</h2>
 
+            {players.length === 0 && <div>No players</div>}
+
             {players.map((p, i) => (
               <div key={i} style={styles.player}>
                 {p.name}
@@ -184,7 +155,12 @@ function App() {
         {tab === "logs" && (
           <div style={styles.panel}>
             <h2>Logs</h2>
-            {logs.map((l, i) => <div key={i}>{l.message}</div>)}
+
+            {logs.length === 0 && <div>No logs</div>}
+
+            {logs.map((l, i) => (
+              <div key={i}>{l.message}</div>
+            ))}
           </div>
         )}
 
@@ -193,21 +169,23 @@ function App() {
   );
 }
 
-// ================= COMPONENTS =================
+// ================= CARD COMPONENT =================
 
-const Card = ({ title, value }) => (
-  <div style={styles.card}>
-    <div>{title}</div>
-    <div>{value}</div>
-  </div>
-);
+function Card({ title, value }) {
+  return (
+    <div style={styles.card}>
+      <h3>{title}</h3>
+      <p>{value}</p>
+    </div>
+  );
+}
 
 // ================= STYLES =================
 
 const styles = {
   app: { display: "flex", background: "#0a0a0a", color: "white", height: "100vh" },
   sidebar: { width: "200px", background: "#111", padding: "20px" },
-  logo: { marginBottom: "20px" },
+  logo: { marginBottom: "20px", fontWeight: "bold" },
   item: { padding: "10px", cursor: "pointer" },
   active: { padding: "10px", background: "#6c5ce7" },
   main: { flex: 1, padding: "20px" },
