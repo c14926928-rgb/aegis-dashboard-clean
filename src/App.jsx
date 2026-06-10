@@ -20,21 +20,22 @@ function App() {
   const fetchData = async () => {
     try {
       const [
-        logsRes,
-        detectionsRes,
-        playersRes,
-        alertsRes,
-        bansRes,
-        movementRes
-      ] = await Promise.all([
-        fetch(`https://aegis-backend-gwu4.onrender.com/logs?serverId=${serverId}`),
-        fetch(`https://aegis-backend-gwu4.onrender.com/detections?serverId=${serverId}`),
-        fetch(`https://aegis-backend-gwu4.onrender.com/players?serverId=${serverId}`),
-        fetch(`https://aegis-backend-gwu4.onrender.com/alerts?serverId=${serverId}`),
-        fetch(`https://aegis-backend-gwu4.onrender.com/bans?serverId=${serverId}`),
-        fetch(`https://aegis-backend-gwu4.onrender.com/movement?serverId=${serverId}`),
-        fetch(`https://aegis-backend-gwu4.onrender.com/status?id=${serverId}`)
-      ]);
+  logsRes,
+  detectionsRes,
+  playersRes,
+  alertsRes,
+  bansRes,
+  movementRes,
+  statusRes
+] = await Promise.all([
+  fetch(`https://aegis-backend-gwu4.onrender.com/logs?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/detections?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/players?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/alerts?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/bans?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/movement?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/status?id=${serverId}`)
+]);
 
       setLogs(await logsRes.json());
       setDetections(await detectionsRes.json());
@@ -42,6 +43,7 @@ function App() {
       setAlerts(await alertsRes.json());
       setBans(await bansRes.json());
       setMovement(await movementRes.json());
+      setStatus((await statusRes.json()).status);
 
     } catch (err) {
       console.error("FETCH ERROR:", err);
@@ -60,7 +62,7 @@ function App() {
 
   } catch (err) {
     console.error("STATUS ERROR:", err);
-    console.log("ID:", id);
+    console.log("ServerID:", serverId);
   }
 };
 
@@ -136,18 +138,18 @@ function App() {
 
     requestAnimationFrame(render);
   }
+  
+if (authorized === null) {
+  return <div>🔐 Checking access...</div>;
+}
+
+if (authorized === false) {
+  return <div>❌ No access</div>;
+}
 
   render();
 
   return () => clearInterval(interval);
-
-  if (authorized === null) {
-  return <div style={{ color: "white", padding: "20px" }}>🔐 Checking access...</div>;
-}
-
-if (authorized === false) {
-  return <div style={{ color: "red", padding: "20px" }}>❌ No tienes acceso a este servidor</div>;
-}
 
 }, [tab]);
 
