@@ -220,120 +220,16 @@ function App() {
   );
 }
 
-// STYLES
 const styles = {
-  app: {
-    display: "flex",
-    height: "100vh",
-    background: "#05050d",
-    color: "white"
-  },
-
-  sidebar: {
-    width: "220px",
-    background: "#0a0a1a",
-    padding: "20px",
-    borderRight: "1px solid #6d28d9"
-  },
-
-  logo: {
-    marginBottom: "20px",
-    color: "#a855f7"
-  },
-
-  menuItem: {
-    padding: "10px",
-    cursor: "pointer"
-  },
-
-  menuItemActive: {
-    padding: "10px",
-    background: "#a855f7"
-  },
-
-  main: {
-    flex: 1,
-    padding: "20px"
-  },
-
-  header: {
-    fontSize: "26px",
-    color: "#a855f7",
-    marginBottom: "20px"
-  },
-
-  stats: {
-    display: "flex",
-    gap: "10px"
-  },
-
-  card: {
-    flex: 1,
-    background: "#111122",
-    padding: "15px",
-    borderRadius: "10px"
-  },
-
-  panel: {
-    background: "#111122",
-    padding: "15px",
-    borderRadius: "10px"
-  },
-
-  player: {
-    marginTop: "10px",
-    padding: "10px",
-    background: "#1a1a2e"
-  },
-
-  monitorCard: {
-    background: "#0a0a1a",
-    border: "1px solid #222",
-    borderRadius: "8px",
-    padding: "10px",
-    marginBottom: "10px"
-  },
-
-  spectatePanel: {
-  position: "fixed",
-  right: "20px",
-  top: "80px",
-  width: "300px",
-  background: "#0a0a1a",
-  border: "1px solid #333",
-  padding: "15px",
-  borderRadius: "10px",
-  boxShadow: "0 0 20px rgba(168,85,247,0.3)",
-  zIndex: 999
-},
-
-card: {
-  flex: 1,
-  background: "#0a0a1a",
-  border: "1px solid #222",
-  padding: "20px",
-  borderRadius: "10px",
-  textAlign: "center"
-},
-
-cardTitle: {
-  fontSize: "14px",
-  color: "#aaa"
-},
-
-cardValue: {
-  fontSize: "28px",
-  color: "#a855f7",
-  marginTop: "5px"
-},
-
-  btn: {
-    padding: "6px",
-    border: "1px solid #a855f7",
-    background: "transparent",
-    color: "white",
-    cursor: "pointer"
-  }
+  app: { display: "flex", height: "100vh", background: "#05050d", color: "white" },
+  sidebar: { width: "200px", background: "#0a0a1a", padding: "20px" },
+  logo: { marginBottom: "20px" },
+  menuItem: { padding: "10px", cursor: "pointer" },
+  menuItemActive: { padding: "10px", background: "#a855f7" },
+  main: { flex: 1, padding: "20px" },
+  header: { fontSize: "24px", marginBottom: "20px" },
+  panel: { background: "#111122", padding: "15px" },
+  card: { background: "#1a1a2e", padding: "10px", flex: 1 }
 };
 
 export default App;
