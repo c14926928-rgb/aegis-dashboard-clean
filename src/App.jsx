@@ -40,22 +40,20 @@ function App() {
 
     try {
       const [
-        logsRes,
-        detectionsRes,
-        playersRes,
-        alertsRes,
-        bansRes,
-        movementRes,
-        statusRes
-      ] = await Promise.all([
-        fetch(`${API}/logs?serverId=${serverId}`),
-        fetch(`${API}/detections?serverId=${serverId}`),
-        fetch(`${API}/players?serverId=${serverId}`),
-        fetch(`${API}/alerts?serverId=${serverId}`),
-        fetch(`${API}/bans?serverId=${serverId}`),
-        fetch(`${API}/movement?serverId=${serverId}`),
-        fetch(`${API}/status?id=${serverId}`)
-      ]);
+  logsRes,
+  detectionsRes,
+  playersRes,
+  alertsRes,
+  bansRes,
+  movementRes
+] = await Promise.all([
+  fetch(`https://aegis-backend-gwu4.onrender.com/logs?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/detections?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/players?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/alerts?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/bans?serverId=${serverId}`),
+  fetch(`https://aegis-backend-gwu4.onrender.com/movement?serverId=${serverId}`)
+]);
 
       setLogs(await logsRes.json());
       setDetections(await detectionsRes.json());
