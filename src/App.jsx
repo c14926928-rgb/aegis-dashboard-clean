@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const API = "https://aegis-backend-gwu4.onrender.com";
 
@@ -14,15 +14,12 @@ function App() {
   const [alerts, setAlerts] = useState([]);
   const [bans, setBans] = useState([]);
   const [movement, setMovement] = useState({});
+  const [frames, setFrames] = useState({});
 
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const canvasRef = useRef(null);
-
-  // ================= GET ID =================
+  // ================= GET SERVER ID =================
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("id");
-
     if (!id) return;
     setServerId(id);
   }, []);
@@ -66,11 +63,28 @@ function App() {
     }
   };
 
+  const fetchFrames = async () => {
+    if (!serverId) return;
+
+    try {
+      const res = await fetch(`${API}/frames/${serverId}`);
+      const data = await res.json();
+      setFrames(data);
+    } catch (err) {
+      console.log("Frames error");
+    }
+  };
+
   useEffect(() => {
     if (!serverId) return;
 
     fetchAll();
-    const interval = setInterval(fetchAll, 3000);
+    fetchFrames();
+
+    const interval = setInterval(() => {
+      fetchAll();
+      fetchFrames();
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [serverId]);
@@ -94,7 +108,7 @@ function App() {
       <div style={styles.sidebar}>
         <div style={styles.logo}>Conclave AC</div>
 
-        {["dashboard","players","detections","alerts","bans","logs"].map((t) => (
+        {["dashboard","players","detections","alerts","bans","logs","monitoring"].map((t) => (
           <div
             key={t}
             onClick={() => setTab(t)}
@@ -164,12 +178,30 @@ function App() {
           </div>
         )}
 
+        {/* 🔥 MONITORING */}
+        {tab === "monitoring" && (
+          <div style={styles.panel}>
+            <h2>Live Monitoring</h2>
+
+            {Object.keys(frames).length === 0 && (
+              <div>No signal</div>
+            )}
+
+            {Object.entries(frames).map(([player, image]) => (
+              <div key={player} style={{ marginBottom: "20px" }}>
+                <h4>{player}</h4>
+                <img src={image} width="200" alt={player} />
+              </div>
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );
 }
 
-// ================= CARD COMPONENT =================
+// ================= CARD =================
 
 function Card({ title, value }) {
   return (
